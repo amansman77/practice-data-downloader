@@ -13,6 +13,11 @@
  - Spring Boot : 2.1.7
  - Gradle : 5.6
  
+## DB연동
+### MongoDB
+`docker run -p 27017:27017 mongo`
+
+
 ## 샘플 데이터
  - 주기 : 1초, 하루기준 데이터 수 : 86400개, 1.48GB
  
@@ -29,17 +34,32 @@
 	 - 파일기반 다운로드 : Get /data/file/{cycle}/{day}
 	 - 데이터 로드후  다운로드 : Get /data/db/load/{cycle}/{day}
 	 - Streaming기반 다운로드 : Get /data/db/stream/{cycle}/{day}
+	 - Streaming기반 다운로드 - find함수에 stream()호출 : Get /data/db/stream/find/{cycle}/{day}
 	 
 ## 다운로드 성능 비교
  - 파일기반 다운로드
  	- 클라이언트의 다운로드 반응 시간 : 즉시
- 	- CPU load :20%
- 	- JVM load :322MB
+ 	- CPU load : 20%
+ 	- JVM load : 322MB
  - DB기반 데이터 로드후  다운로드
  	- 클라이언트의 다운로드 반응 시간 : 약 17초(DB에서 데이터를 가져오는 시간에 종속)
  	- CPU load : 20%
  	- JVM load : 3,000MB
  - DB기반 Streaming기반 다운로드
  	- 클라이언트의 다운로드 반응 시간 : 즉시
- 	- CPU load :12%
- 	- JVM load :400MB
+ 	- CPU load : 12%
+ 	- JVM load : 400MB
+ - DB기반 Streaming기반 다운로드 - find함수에 stream()호출
+ 	- 클라이언트의 다운로드 반응 시간 : 
+ 	- CPU load : 
+ 	- JVM load : 
+
+## 이슈
+
+### CSV로 다운로드시 한글이 깨질때 해결
+```java
+response.setContentType("text/csv;charset=EUC-KR");
+
+PrintWriter out = response.getWriter(); 
+out.println("한글입니다.")
+```

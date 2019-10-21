@@ -174,11 +174,39 @@ public class DataController {
     	
     	//입력 스트림 생성
         try {
-			response.setContentType("text/csv;charset=UTF-8");
+        	response.setContentType("text/csv;charset=EUC-KR");
 			response.setHeader("Content-disposition", "attachment; filename="+ "rawdata_" + cycle + "_" + day + ".csv");
+			
 	    	PrintWriter out = response.getWriter();
-	    	
 	    	stream.forEach(data -> out.println(data.toString()));
+	    	out.flush();
+		} catch (IOException e) {
+			throw e;
+		}
+    }
+    
+    /**
+     * 데이터를 스트림으로 불러 다운로드 스트림으로 전달
+     * @param cycle
+     * @param day
+     * @param response
+     * @return
+     * @throws IOException 
+     */
+    @GetMapping("/db/stream/find/{cycle}/{day}")
+    public void getDataFindStreamFromDB(@PathVariable String cycle,
+    		@PathVariable String day,
+    		HttpServletResponse response) throws IOException {
+    	Stream<Rawdata> stream = rawdataMongoDBRepository.findById(cycle + "_" + day).stream();
+    	
+    	//입력 스트림 생성
+        try {
+        	response.setContentType("text/csv;charset=EUC-KR");
+			response.setHeader("Content-disposition", "attachment; filename="+ "rawdata_" + cycle + "_" + day + ".csv");
+	    	
+			PrintWriter out = response.getWriter();
+	    	stream.forEach(data -> out.println(data.toString()));
+	    	out.flush();
 		} catch (IOException e) {
 			throw e;
 		}
